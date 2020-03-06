@@ -1,4 +1,4 @@
-# yo_movies
+# YoMovies
 
 A new Flutter project.
 
