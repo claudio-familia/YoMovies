@@ -69,7 +69,7 @@ class Movie {
     if(posterPath == null){
       return 'https://www.poresto.net/wp-content/uploads/CARTELERA-CARMEN.jpg';
     }else{
-      return 'https://image.tmdb.org/t/p/w600_and_h900_bestv2$posterPath';
+      return 'https://image.tmdb.org/t/p/w500$posterPath';
     }
   }
 

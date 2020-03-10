@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -6,21 +7,65 @@ import 'package:yo_movies/src/models/movie_model.dart';
 
 
 class MovieProvider{
-  String _apiKey = 'fdd239543577a82b54995874ecae8330';
-  String _url = 'api.themoviedb.org';
-  String _language = 'en-US';
+  static final _apiKey = 'fdd239543577a82b54995874ecae8330';
+  static final _url = 'api.themoviedb.org';
+  static final _language = 'en-US';  
 
-  Future<List<Movie>> getNowPlaying() async {
-    final url = Uri.https(_url, '/3/movie/now_playing', {
+  int _popularPage = 0;
+  bool _isLoadingData = false;
+
+  List<Movie> _populars = new List();
+
+  final _popularStreamController = new StreamController<List<Movie>>.broadcast();
+
+  void disposeStreams(){
+    _popularStreamController?.close();
+  }
+
+  Function(List<Movie>) get popularSink => _popularStreamController.sink.add;
+  
+  Stream<List<Movie>> get popularStream => _popularStreamController.stream;
+
+  final _apiConfig = {
       'api_key'   : _apiKey,
-      'language'  : _language
-    });
-    
+      'language'  : _language,      
+  };
+
+  Future<List<Movie>> getResponse(Uri url) async {
     final response = await http.get(url);
     final decodeData = json.decode(response.body);
 
     final movies = new Movies.fromJsonList(decodeData['results']);        
     
     return movies.items;
+  }
+
+  Future<List<Movie>> getNowPlaying() async {    
+    final url = Uri.https(_url, '/3/movie/now_playing', _apiConfig);    
+    return await getResponse(url);
+  }
+
+  Future<List<Movie>> getPopularMovies() async {
+    if(this._isLoadingData) return [];                     
+
+      this._isLoadingData = true;
+
+      this._popularPage++;    
+      
+      final url = Uri.https(_url, '/3/movie/popular', {
+        'api_key'   : _apiKey,
+        'language'  : _language,
+        'page'      : this._popularPage.toString()
+      });
+      
+      final response = await getResponse(url);
+
+      _populars.addAll(response);
+      
+      popularSink(_populars);
+
+      this._isLoadingData = false;      
+
+      return response;
   }
 }
