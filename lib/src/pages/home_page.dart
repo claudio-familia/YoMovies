@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yo_movies/src/delegates/search_delegate.dart';
 import 'package:yo_movies/src/providers/movie_provider.dart';
 import 'package:yo_movies/src/widgets/card_swiper_widget.dart';
 import 'package:yo_movies/src/widgets/movie_horizontal_pageview.dart';
@@ -17,7 +18,9 @@ class HomePage extends StatelessWidget {
         title: Text('YoMovies'),
         backgroundColor: Colors.indigoAccent,            
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.search), onPressed: (){}),
+          IconButton(icon: Icon(Icons.search), onPressed: (){
+            showSearch(context: context, delegate: DataSearch());
+          }),
         ],
       ),
       body: Column(
@@ -66,7 +69,8 @@ class HomePage extends StatelessWidget {
   _getPopular() {
     return StreamBuilder(
       stream: _movieProvider.popularStream,
-      builder: (BuildContext context, AsyncSnapshot<List> snapshot){
+      builder: (BuildContext context, AsyncSnapshot<List> snapshot){        
+
         if(snapshot.hasData){          
           return MovieHorizontalPageView(
             movies: snapshot.data,

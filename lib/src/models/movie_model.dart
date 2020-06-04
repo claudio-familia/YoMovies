@@ -15,6 +15,7 @@ class Movies{
 }
 
 class Movie {
+  String uniqueId;  
   double popularity;
   int voteCount;
   bool video;
@@ -70,6 +71,14 @@ class Movie {
       return 'https://www.poresto.net/wp-content/uploads/CARTELERA-CARMEN.jpg';
     }else{
       return 'https://image.tmdb.org/t/p/w500$posterPath';
+    }
+  }
+
+  getBackDrop(){
+    if(posterPath == null){
+      return 'https://www.poresto.net/wp-content/uploads/CARTELERA-CARMEN.jpg';
+    }else{
+      return 'https://image.tmdb.org/t/p/w500$backdropPath';
     }
   }
 

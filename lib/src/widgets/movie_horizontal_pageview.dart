@@ -20,7 +20,7 @@ class MovieHorizontalPageView extends StatelessWidget {
     _pageController.addListener(() {
       if(_pageController.position.pixels >= _pageController.position.maxScrollExtent - 200){
         this.nextPage();
-      };
+      }
     });
 
     return Container(
@@ -37,19 +37,25 @@ class MovieHorizontalPageView extends StatelessWidget {
   }
 
   Widget getMovie(BuildContext context, Movie movie) {
-    return Column(
+
+    movie.uniqueId = '${movie.id}-down';
+
+    final movieCard = Column(
         children: <Widget>[
             Container(
               padding: EdgeInsets.only(right: 5.0),              
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: FadeInImage(
-                image: NetworkImage(movie.getPoster()),
-                placeholder: AssetImage('lib/assets/img/loading.gif'),
-                fit: BoxFit.cover,            
-                height: 140.0,
+              child: Hero(
+                tag: movie.uniqueId,
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20.0),
+                    child: FadeInImage(
+                      image: NetworkImage(movie.getPoster()),
+                      placeholder: AssetImage('lib/assets/img/loading.gif'),
+                      fit: BoxFit.cover,            
+                      height: 140.0,
+                    ),
+                ),
               ),
-            ),
           ),
           SizedBox(height: 5.0,),
           Text(
@@ -58,6 +64,13 @@ class MovieHorizontalPageView extends StatelessWidget {
             style: Theme.of(context).textTheme.caption,
           )
         ],
+      );
+
+      return GestureDetector(
+        child: movieCard,
+        onTap: (){           
+          Navigator.pushNamed(context, 'details', arguments: movie);
+        },
       );
   }
 }
